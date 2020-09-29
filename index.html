@@ -19,16 +19,26 @@
 <body>
   <div class="container">
     <h1>What are Democrats and Republicans saying about climate and energy?</h1>
+    <p>
+      <input type="text" placeholder="Search..." id="mySearch" style="display:none">
+    </p>
+    <div class="container-small-1">
+      <!-- <p>Topic:</p> -->
+      <div id="bidenFilter1"></div><p style="width: 50%">
+        
+        <label for="mySelect">Topic: </label> 
+        <select id="mySelect" onchange="updateDatatable()" style="display:inline-block">
+          <option value="">All</option>
+        </select></p>
+      
+    </div>
 <div id="table-container">
 <table id="biden" class="table table-hover table-striped table-sm" cellspacing="0" >
   <div id="header-biden">
     <div id="header-title">
       <h1>Democrats</h1>
       
-      <div class="container-small-1">
-      <p>Topic:</p>
-      <div id="bidenFilter1" style="height:40px;"></div>
-      </div>
+      
       <div class="container-small-2">
       <p>Who:</p>
       <div id="bidenFilter2" style="height:40px;"></div>
@@ -62,10 +72,10 @@
     <div id="header-trump">
       <div id="header-title">
         <h1>Republicans</h1>
-        <div class="container-small-1">
+        <!-- <div class="container-small-1">
           <p>Topic:</p>
           <div id="trumpFilter1" style="height:40px;"></div>
-          </div>
+          </div> -->
           <div class="container-small-2">
           <p>Who:</p>
           <div id="trumpFilter2" style="height:40px;"></div>
@@ -90,249 +100,243 @@
 </div>
 <script>
 
-// TABLE 1
-$.getJSON("https://spreadsheets.google.com/feeds/list/1TSDRAVjUxgOIgAhh5Ly_5s7NwRaWkOedhAJu7haNBd8/1/public/full?alt=json", function (data) {
+let topics = [];
+
+
+  $.getJSON("https://spreadsheets.google.com/feeds/list/1TSDRAVjUxgOIgAhh5Ly_5s7NwRaWkOedhAJu7haNBd8/1/public/full?alt=json", function (data) {
 
       
-      var sheetData = data.feed.entry;
+var sheetData = data.feed.entry;
+
+var i;
+for (i = 0; i < sheetData.length; i++) {
+  var topic = data.feed.entry[i]['gsx$topic']['$t'];
+  topics.push(topic);
+  var who = data.feed.entry[i]['gsx$who']['$t'];
+  const quote = data.feed.entry[i]['gsx$quote']['$t'].replace( /"/g, '&quot;' );
+  var link = data.feed.entry[i]['gsx$link']['$t'];
+  var source = data.feed.entry[i]['gsx$source']['$t'];
+  let clip1 = source.split("https://").pop().split("/")[0];
   
-      var i;
-      for (i = 0; i < sheetData.length; i++) {
-        var topic = data.feed.entry[i]['gsx$topic']['$t'];
-        var who = data.feed.entry[i]['gsx$who']['$t'];
-        const quote = data.feed.entry[i]['gsx$quote']['$t'].replace( /"/g, '&quot;' );
-        var link = data.feed.entry[i]['gsx$link']['$t'];
-        var source = data.feed.entry[i]['gsx$source']['$t'];
-        let clip1 = source.split("https://").pop().split("/")[0];
-        
-        table1.row.add([
-          topic,
-          who,
-          quote,
-          '<a href=\"' + link + '\" target="_blank">' + clip1 + '</a>',
-        ]).draw( false );
+  table1.row.add([
+    topic,
+    who,
+    quote,
+    '<a href=\"' + link + '\" target="_blank">' + clip1 + '</a>',
+  ]).draw( false );
+}
+
+});
+
+topics = topics.filter((v, i, a) => a.indexOf(v) === i);
+
+var table1 = $('#biden').DataTable({
+  lengthChange: false,
+  pageLength: 9, 
+  language:{
+    search: "Filter:",
+  },
+
+drawCallback: function (settings) {
+let topicSelected = jQuery('#mySelect').val()
+$('[data-toggle="tooltip"]').tooltip()
+      this.api().column(1).every( function () {
+          var column = this;
+          var select = $('<select><option value="">All</option></select>')
+              .appendTo( $('#bidenFilter2').empty() )
+              .on( 'change', function () {
+                  var val = $.fn.dataTable.util.escapeRegex(
+                      $(this).val()
+                  );
+
+                  column
+                      .search( val ? '^'+val+'$' : '', true, false )
+                      .draw();
+              } );
+
+          column.data().unique().sort().each( function ( d, j ) {
+              select.append( '<option value="'+d+'">'+d+'</option>' );
+          } );
+          var currSearch = column.search();
+if ( currSearch ) {
+select.val( currSearch.substring(1, currSearch.length-1) );
+}
+      } );
+
+// TOPIC FILTER
+
+$('#mySelect').html("");
+$('#mySelect').append('<option value="">All</option>');
+for(i=0;i < topics.length; i++){
+       $("#mySelect").append("<option value='"+topics[i]+"'>"+topics[i]+"</option>");
       }
+var optionValues =[];
+$('#mySelect option').each(function(){
+  if ($.inArray(this.value, optionValues) >-1){
+    $(this).remove()
+  } else {
+    optionValues.push(this.value);
+  }
+})
+jQuery('#mySelect').val(topicSelected)
+},
 
-    });
-
-  var table1 = $('#biden').DataTable({
-    
-    // "dom": '<"top">t<"bottom"i>p<"clear">',
-        // scrollY:        '75vh',
-        // scrollCollapse: true,
-        // paging:         false,
-        lengthChange: false,
-        pageLength: 9, 
-        language:{
-          search: "Filter:",
-        },
-
-  drawCallback: function (settings) {
-    $('[data-toggle="tooltip"]').tooltip()
-            this.api().column(0).every( function () {
-                var column = this;
-                var select = $('<select><option value="">All</option></select>')
-                    .appendTo( $('#bidenFilter1').empty() )
-                    .on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
- 
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
- 
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' );
-                } );
-                var currSearch = column.search();
-    if ( currSearch ) {
-      select.val( currSearch.substring(1, currSearch.length-1) );
-    }
-            } );
-            this.api().column(1).every( function () {
-                var column = this;
-                var select = $('<select><option value="">All</option></select>')
-                    .appendTo( $('#bidenFilter2').empty() )
-                    .on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
- 
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
- 
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' );
-                } );
-                var currSearch = column.search();
-    if ( currSearch ) {
-      select.val( currSearch.substring(1, currSearch.length-1) );
-    }
-            } );
-        },
-
-  columnDefs: [
-      { bSortable: false, targets: [1, 2, 3] },
+columnDefs: [
+{ bSortable: false, targets: [1, 2, 3] },
 
 // Check screenwidth, and length of data in the 3rd column. Return clipped string with ellipsis if screenwidth under certain width
 
-      { targets: 2,
-    render: function checkPosition(data, type, row, meta) {
-    if (window.matchMedia('(min-width: 401px) and (max-width: 737px)').matches) {
-        return type === 'display' && data.length > 60 ?
-        '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 75 ).replace( '&quot;', '"' )+'...</span>' :
-        data;
-    } else if (window.matchMedia('(max-width: 400px)').matches){ 
-        return type === 'display' && data.length > 50 ?
-        '<div data-toggle="tooltip" disabled title="'+data+'">(Click to expand)</span>' :
-        data;
-    } else if (window.matchMedia('(min-width: 738px)').matches){ 
-      return type === 'display' && data.length > 200 ?
-        '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 200 )+'...</span>' :
-        data;
-      }
-    }
-  }
-  ],
-  
-  responsive: true,
-  // "orderFixed": [[ 0, "asc" ]],
-  rowGroup: {
-            dataSrc: 0
-        },
-  "lengthMenu": [[9, 18, 36, -1], [9, 18, 36, "All"]],
-    });
+{ targets: 2,
+render: function checkPosition(data, type, row, meta) {
+if (window.matchMedia('(min-width: 401px) and (max-width: 737px)').matches) {
+  return type === 'display' && data.length > 60 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 75 ).replace( '&quot;', '"' )+'...</span>' :
+  data;
+} else if (window.matchMedia('(max-width: 400px)').matches){ 
+  return type === 'display' && data.length > 50 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">(Click to expand)</span>' :
+  data;
+} else if (window.matchMedia('(min-width: 738px)').matches){ 
+return type === 'display' && data.length > 200 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 200 )+'...</span>' :
+  data;
+}
+}
+}
+],
 
-    // TABLE 2
+responsive: true,
+// "orderFixed": [[ 0, "asc" ]],
+rowGroup: {
+      dataSrc: 0
+  },
+"lengthMenu": [[9, 18, 36, -1], [9, 18, 36, "All"]],
+});
 
-  $.getJSON("https://spreadsheets.google.com/feeds/list/1TSDRAVjUxgOIgAhh5Ly_5s7NwRaWkOedhAJu7haNBd8/2/public/full?alt=json", function (data) {
-  
-        
-        var sheetData = data.feed.entry;
-    
-        var i;
-        for (i = 0; i < sheetData.length; i++) {
-        var topic2 = data.feed.entry[i]['gsx$topic']['$t'];
-        var who = data.feed.entry[i]['gsx$who']['$t'];
-        var quote = data.feed.entry[i]['gsx$quote']['$t'].replace( /"/g, '&quot;' );;
-        var link = data.feed.entry[i]['gsx$link']['$t'];
-        var source = data.feed.entry[i]['gsx$source']['$t']
-        let clip1 = source.split("https://").pop().split("/")[0];
-        console.log(who);
-        table2.row.add([
-          topic2,
-          who,
-          quote,
-          '<a href=\"' + link + '\" target="_blank">' + clip1 + '</a>',
-        ]).draw( false );
-      }
+
+
+// TABLE 1
+
+
+  // TABLE 2
+
+$.getJSON("https://spreadsheets.google.com/feeds/list/1TSDRAVjUxgOIgAhh5Ly_5s7NwRaWkOedhAJu7haNBd8/2/public/full?alt=json", function (data) {
+
       
-  
-      });
-    const table2 = $('#trump').DataTable({
-      
-      // "dom": '<"top">t<"bottom"i>p<"clear">',
-      // scrollY:        '75vh',
-      //   scrollCollapse: true,
-      //   paging:         false,
-    lengthChange: false,
-    pageLength: 9, 
-    language:{
-      search: "Filter:",
-    },
+var sheetData = data.feed.entry;
 
-    drawCallback: function (settings) {
-    $('[data-toggle="tooltip"]').tooltip()
-            this.api().column(0).every( function () {
-                var column = this;
-                var select = $('<select><option value="">All</option></select>')
-                    .appendTo( $('#trumpFilter1').empty() )
-                    .on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
- 
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
- 
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' );
-                } );
-                var currSearch = column.search();
-    if ( currSearch ) {
-      select.val( currSearch.substring(1, currSearch.length-1) );
-    }
+var i;
+for (i = 0; i < sheetData.length; i++) {
+var topic2 = data.feed.entry[i]['gsx$topic']['$t'];
+var who = data.feed.entry[i]['gsx$who']['$t'];
+var quote = data.feed.entry[i]['gsx$quote']['$t'].replace( /"/g, '&quot;' );;
+var link = data.feed.entry[i]['gsx$link']['$t'];
+var source = data.feed.entry[i]['gsx$source']['$t']
+let clip1 = source.split("https://").pop().split("/")[0];
+console.log(who);
+table2.row.add([
+  topic2,
+  who,
+  quote,
+  '<a href=\"' + link + '\" target="_blank">' + clip1 + '</a>',
+]).draw( false );
+}
+
+
+});
+const table2 = $('#trump').DataTable({
+lengthChange: false,
+pageLength: 9, 
+language:{
+search: "Filter:",
+},
+
+drawCallback: function (settings) {
+$('[data-toggle="tooltip"]').tooltip()
+    this.api().column(1).every( function () {
+        var column = this;
+        var select = $('<select><option value="">All</option></select>')
+            .appendTo( $('#trumpFilter2').empty() )
+            .on( 'change', function () {
+                var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                );
+
+                column
+                    .search( val ? '^'+val+'$' : '', true, false )
+                    .draw();
             } );
-            this.api().column(1).every( function () {
-                var column = this;
-                var select = $('<select><option value="">All</option></select>')
-                    .appendTo( $('#trumpFilter2').empty() )
-                    .on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
- 
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
- 
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' );
-                } );
-                var currSearch = column.search();
-    if ( currSearch ) {
-      select.val( currSearch.substring(1, currSearch.length-1) );
-    }
-            } );
-        },
 
- 
+        column.data().unique().sort().each( function ( d, j ) {
+            select.append( '<option value="'+d+'">'+d+'</option>' );
+        } );
+        var currSearch = column.search();
+if ( currSearch ) {
+select.val( currSearch.substring(1, currSearch.length-1) );
+}
+    } );
+
+    
+},
+
+
+
+
+
+columnDefs: [
+{ bSortable: false, targets: [1, 2, 3] },
+
+{ targets: 2,
+render: function checkPosition(data, type, row, meta) {
+if (window.matchMedia('(min-width: 401px) and (max-width: 737px)').matches) {
+return type === 'display' && data.length > 60 ?
+'<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 75 ).replace( '&quot;', '"' )+'...</span>' :
+data;
+} else if (window.matchMedia('(max-width: 400px)').matches){ 
+return type === 'display' && data.length > 50 ?
+'<div data-toggle="tooltip" disabled title="'+data+'">(Click to expand)</span>' :
+data;
+} else if (window.matchMedia('(min-width: 738px)').matches){ 
+return type === 'display' && data.length > 200 ?
+'<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 200 )+'...</span>' :
+data;
+}
+}
+}
+],
+
+responsive: true,
+// "orderFixed": [[ 0, "asc" ]],
+rowGroup: {
+    dataSrc: 0
+},
+"lengthMenu": [[9, 18, 36, -1], [9, 18, 36, "All"]],
+
+
+
+});
 
   
+  
 
-  columnDefs: [
-      { bSortable: false, targets: [1, 2, 3] },
+    $('#mySearch').on( 'keyup click', function () {
+    table1.column([0]).search($(this).val()).draw();
+    table2.column([0]).search($(this).val()).draw();
 
-      { targets: 2,
-    render: function checkPosition(data, type, row, meta) {
-    if (window.matchMedia('(min-width: 401px) and (max-width: 737px)').matches) {
-        return type === 'display' && data.length > 60 ?
-        '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 75 ).replace( '&quot;', '"' )+'...</span>' :
-        data;
-    } else if (window.matchMedia('(max-width: 400px)').matches){ 
-        return type === 'display' && data.length > 50 ?
-        '<div data-toggle="tooltip" disabled title="'+data+'">(Click to expand)</span>' :
-        data;
-    } else if (window.matchMedia('(min-width: 738px)').matches){ 
-      return type === 'display' && data.length > 200 ?
-        '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 200 )+'...</span>' :
-        data;
-      }
-    }
+  });
+    
+  function updateDatatable(){
+    let selected = jQuery('#mySelect').val();
+    jQuery('#mySearch').val(selected);
+    jQuery('#mySearch').trigger('click');
+    // setTimeout(function(){
+      jQuery('#mySelect').val(selected)  
+    // })
+
+    
+  
   }
-  ],
 
-  responsive: true,
-  // "orderFixed": [[ 0, "asc" ]],
-  rowGroup: {
-            dataSrc: 0
-        },
-    "lengthMenu": [[9, 18, 36, -1], [9, 18, 36, "All"]],
-
-    
-
-      });
-
-  
-  
-    
   </script>
   </body>
 </html>
