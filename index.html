@@ -125,10 +125,11 @@ for (i = 0; i < sheetData.length; i++) {
 topics = topics.filter((v, i, a) => a.indexOf(v) === i);
 
 var table1 = $('#biden').DataTable({
+  scrollY:        '75vh',
+  scrollCollapse: true,
+  paging:         false,
   ordering: false,
-  lengthChange: false,
-  pageLength: 9, 
-  pagingType: "simple",
+  // pagingType: "simple",
   language:{
     search: "Filter:",
   },
@@ -241,10 +242,13 @@ table2.row.add([
 
 });
 var table2 = $('#trump').DataTable({
-ordering: false,
-lengthChange: false,
-pagingType: "simple",
-pageLength: 9, 
+  scrollY:        '75vh',
+  scrollCollapse: true,
+  paging:         false,
+  ordering: false,
+// lengthChange: false,
+// pagingType: "simple",
+// pageLength: 3, 
 language:{
 search: "Filter:",
 },
