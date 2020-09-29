@@ -127,9 +127,11 @@ topics = topics.filter((v, i, a) => a.indexOf(v) === i);
 var table1 = $('#biden').DataTable({
   scrollY:        '65vh',
   scrollCollapse: true,
-  paging:         false,
+  paging:         true,
   ordering: false,
-  // pagingType: "simple",
+  lengthChange: false,
+  pagingType: "simple",
+  pageLength: 9, 
   language:{
     search: "Filter:",
   },
@@ -230,7 +232,6 @@ var quote = data.feed.entry[i]['gsx$quote']['$t'].replace( /"/g, '&quot;' );;
 var link = data.feed.entry[i]['gsx$link']['$t'];
 var source = data.feed.entry[i]['gsx$source']['$t']
 let clip1 = source.split("https://").pop().split("/")[0];
-console.log(who);
 table2.row.add([
   topic2,
   who,
@@ -244,11 +245,11 @@ table2.row.add([
 var table2 = $('#trump').DataTable({
   scrollY:        '65vh',
   scrollCollapse: true,
-  paging:         false,
+  paging:         true,
   ordering: false,
-// lengthChange: false,
-// pagingType: "simple",
-// pageLength: 3, 
+  lengthChange: false,
+  pagingType: "simple",
+  pageLength: 9, 
 language:{
 search: "Filter:",
 },
