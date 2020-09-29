@@ -1,2 +1,2 @@
-Coronavirus: Tracking how the world’s ‘green recovery’ plans aim to cut emissions
+Biden vs Trump: What are Democrats and Republicans saying about climate and energy?
 www.carbonbrief.org
