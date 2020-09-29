@@ -164,7 +164,7 @@ td.sorting_1{
 
 /* //HACK to hide repeat topic values// */
 
-    td.sorting_1{
+    tr.odd td:nth-child(1), tr.even td:nth-child(1){
         font-size:0px;
     }
 
@@ -190,23 +190,18 @@ td.sorting_1{
         display: none;
     }
 
-    /* table.table-hover.table-striped.table-sm.dataTable#biden{
-        color:#0b4572;
-    }
-
-    table.table-hover.table-striped.table-sm.dataTable#trump{
-        color:#c7432b;
-    } */
-
-    /* table.table-hover.table-striped.table-sm.dataTable.no-footer, table#trump, table#biden{
-        width:100%;
-        margin-left:10px !important;
-        margin-right:10px !important;
-    } */
-
     .dataTables_scrollHead table#biden{
         margin-right:10px;
     }
+
+    .tables-container{
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    }
+
     .container h1{
         width:100%;
         font-family: 'PT Sans Narrow', sans-serif;
@@ -330,93 +325,87 @@ div.dataTables_wrapper div.dataTables_paginate{
 
 /*MEDIA QUERIES*/
 @media screen and (min-width:1201px){
-    th:nth-child(4), td:nth-child(4) {
+    th:nth-child(2), td:nth-child(2) {
         width:25%;
     }
 
-    th:nth-child(10), td:nth-child(10), th:nth-child(11), td:nth-child(11){
-        /*width:10%;*/
+    /* th:nth-child(10), td:nth-child(10), th:nth-child(11), td:nth-child(11){
 	   word-wrap: break-word;
-    }
+    } */
 }
 
 @media screen and (min-width:980px) and (max-width: 1200px){
-    th:nth-child(4), td:nth-child(4){
+    th:nth-child(2), td:nth-child(2){
         width:20%;
-    }
-
-    th:nth-child(10), td:nth-child(10), th:nth-child(11), td:nth-child(11){
-        /*width:7%;*/
-    }
-    td:nth-child(10), td:nth-child(11){
-        word-wrap: break-word;
     }
 }
 
 
-@media screen and (min-width:739px) and (max-width: 979px){
-    th:nth-child(4), td:nth-child(4){
+@media screen and (min-width:739px) and (max-width: 991px){
+    th:nth-child(2), td:nth-child(2){
         width:20%;
-    }
-
-    th:nth-child(10), td:nth-child(10), th:nth-child(11), td:nth-child(11){
-        /*width:10%;*/
-        word-wrap: break-word;
     }
     table{
-        font-size:8px;
+        font-size:10px;
+    }
+   
+}
+
+@media screen and (min-width:601px) and (max-width: 991px){
+    #header-title{
+        padding-top:0;
     }
 }
+
 
 
 @media screen and (min-width:600px) and (max-width: 738px){
 
-    th:nth-child(4), td:nth-child(4){
+    /* th:nth-child(2), td:nth-child(2){
         width:20%;
-    }
-
-    th:nth-child(10), td:nth-child(10), th:nth-child(11), td:nth-child(11){
-        display: none
-    }
-    
-    th:nth-child(12), td:nth-child(12){
+    }     */
+    /* th:nth-child(12), td:nth-child(12){
         display:table-cell;
-    }
+    } */
     tr{
         height: 40px;
     }
 
-    table{
+    /* table{
         font-size:8px;
-    }   
+    }    */
 }
 
 @media screen and (min-width:250px) and (max-width: 599px){
-    th:nth-child(4) {
-        width: 30px !important;
+    table.dataTable thead > tr > th.sorting_asc{
+        padding-right:0;
     }
 
-    th:nth-child(1), th:nth-child(2), th:nth-child(3), th:nth-child(6), th:nth-child(7), th:nth-child(8), th:nth-child(9){
+    .container{
+        width:95%;
+    }
+
+    #table-container{
+        width:98%;
+    }
+
+    /* th:nth-child(2) {
+        width: 20px !important;
+    } */
+
+    /* th:nth-child(1), th:nth-child(2), th:nth-child(3), th:nth-child(6), th:nth-child(7), th:nth-child(8), th:nth-child(9){
         width:3px !important;
-    }
-
-    th:nth-child(5), td:nth-child(5), th:nth-child(10), td:nth-child(10), th:nth-child(11), td:nth-child(11){
-        display: none
-    }
+    } */
     
-    th:nth-child(12), td:nth-child(12){
-        display:table-cell;
-        width:20px !important;
-    }
     tr{
         height: 40px;
     }
     table{
-        font-size:6px;
+        font-size:9px;
     }   
-    * {
+    /* * {
         box-sizing: content-box;
-    }
+    } */
     .table-bordered td{
         border:none;
     }
@@ -428,7 +417,10 @@ div.dataTables_wrapper div.dataTables_paginate{
 
     #header-title{
     padding-top:1.2em;
-    padding-left:1.2em;
+    }
+
+    h1{
+        font-size: 1.9rem;
     }
 
     #header-title h1{

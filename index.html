@@ -23,7 +23,6 @@
       <input type="text" placeholder="Search..." id="mySearch" style="display:none">
     </p>
     <div class="container-small-1">
-      <!-- <p>Topic:</p> -->
       <div id="bidenFilter1"></div><p style="width: 50%">
         
         <label for="mySelect">Topic: </label> 
@@ -43,7 +42,6 @@
       <p>Who:</p>
       <div id="bidenFilter2" style="height:40px;"></div>
       </div>
-      <!-- <p>Sort the entries by column header or filter via the search box</p> -->
     </div>
     <!-- <div id="logo">
       <img src="img/cblogo.png">
@@ -72,10 +70,6 @@
     <div id="header-trump">
       <div id="header-title">
         <h1>Republicans</h1>
-        <!-- <div class="container-small-1">
-          <p>Topic:</p>
-          <div id="trumpFilter1" style="height:40px;"></div>
-          </div> -->
           <div class="container-small-2">
           <p>Who:</p>
           <div id="trumpFilter2" style="height:40px;"></div>
@@ -131,8 +125,10 @@ for (i = 0; i < sheetData.length; i++) {
 topics = topics.filter((v, i, a) => a.indexOf(v) === i);
 
 var table1 = $('#biden').DataTable({
+  ordering: false,
   lengthChange: false,
   pageLength: 9, 
+  pagingType: "simple",
   language:{
     search: "Filter:",
   },
@@ -182,23 +178,23 @@ jQuery('#mySelect').val(topicSelected)
 },
 
 columnDefs: [
-{ bSortable: false, targets: [1, 2, 3] },
+{ bSortable: false, targets: [0, 1, 2, 3] },
 
 // Check screenwidth, and length of data in the 3rd column. Return clipped string with ellipsis if screenwidth under certain width
 
 { targets: 2,
 render: function checkPosition(data, type, row, meta) {
-if (window.matchMedia('(min-width: 401px) and (max-width: 737px)').matches) {
-  return type === 'display' && data.length > 60 ?
-  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 75 ).replace( '&quot;', '"' )+'...</span>' :
+if (window.matchMedia('(min-width: 401px) and (max-width: 992px)').matches) {
+  return type === 'display' && data.length > 50 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 55 ).replace( '&quot;', '"' )+'...</span>' :
   data;
 } else if (window.matchMedia('(max-width: 400px)').matches){ 
-  return type === 'display' && data.length > 50 ?
+  return type === 'display' && data.length > 40 ?
   '<div data-toggle="tooltip" disabled title="'+data+'">(Click to expand)</span>' :
   data;
-} else if (window.matchMedia('(min-width: 738px)').matches){ 
-return type === 'display' && data.length > 200 ?
-  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 200 )+'...</span>' :
+} else if (window.matchMedia('(min-width: 993px)').matches){ 
+return type === 'display' && data.length > 150 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 160 )+'...</span>' :
   data;
 }
 }
@@ -206,7 +202,7 @@ return type === 'display' && data.length > 200 ?
 ],
 
 responsive: true,
-// "orderFixed": [[ 0, "asc" ]],
+"orderFixed": [[ 1, "asc" ]],
 rowGroup: {
       dataSrc: 0
   },
@@ -244,8 +240,10 @@ table2.row.add([
 
 
 });
-const table2 = $('#trump').DataTable({
+var table2 = $('#trump').DataTable({
+ordering: false,
 lengthChange: false,
+pagingType: "simple",
 pageLength: 9, 
 language:{
 search: "Filter:",
@@ -288,18 +286,18 @@ columnDefs: [
 
 { targets: 2,
 render: function checkPosition(data, type, row, meta) {
-if (window.matchMedia('(min-width: 401px) and (max-width: 737px)').matches) {
-return type === 'display' && data.length > 60 ?
-'<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 75 ).replace( '&quot;', '"' )+'...</span>' :
-data;
+if (window.matchMedia('(min-width: 401px) and (max-width: 992px)').matches) {
+  return type === 'display' && data.length > 50 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 55 ).replace( '&quot;', '"' )+'...</span>' :
+  data;
 } else if (window.matchMedia('(max-width: 400px)').matches){ 
-return type === 'display' && data.length > 50 ?
-'<div data-toggle="tooltip" disabled title="'+data+'">(Click to expand)</span>' :
-data;
-} else if (window.matchMedia('(min-width: 738px)').matches){ 
-return type === 'display' && data.length > 200 ?
-'<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 200 )+'...</span>' :
-data;
+  return type === 'display' && data.length > 40 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">(Click to expand)</span>' :
+  data;
+} else if (window.matchMedia('(min-width: 993px)').matches){ 
+return type === 'display' && data.length > 150 ?
+  '<div data-toggle="tooltip" disabled title="'+data+'">'+data.substr( 0, 160 )+'...</span>' :
+  data;
 }
 }
 }
